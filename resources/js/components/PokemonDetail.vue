@@ -21,22 +21,6 @@
                             icon="fas fa-thumbs-down" @click.stop="dislikePokemon(pokemon)"></v-btn>
                     </div>
                 </v-img>
-
-
-                <!-- <v-card-actions>
-                <v-spacer></v-spacer>
-
-                <v-list-item-action>
-                    <v-btn text :color="pokemon.liked ? '#09f' : '#424242'" @click.stop="likePokemon(pokemon)">
-                        <v-icon small>fa fa-thumbs-up</v-icon>
-                        {{ pokemon.likes_count }}
-                    </v-btn>
-                </v-list-item-action>
-
-                <v-btn size="small" color="surface-variant" variant="text" icon="fas fa-heart"></v-btn>
-
-                <v-btn size="small" color="surface-variant" variant="text" icon="fa fa-thumbs-down"></v-btn>
-            </v-card-actions> -->
             </v-card>
         </v-hover>
 

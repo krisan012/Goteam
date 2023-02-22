@@ -2,21 +2,23 @@
     <v-container>
         <v-row class="mx-lg-auto">
             <v-col v-for="pokemon in pokemonList" :key="pokemon.name" @click="selectPokemon(pokemon)"
-                class="d-flex child-flex pa-2" cols="12" lg="3" md="4" sm="6" align-self="center">
+                class="d-flex child-flex pa-2" cols="20" lg="3" md="4" sm="6" align-self="center">
                 <pokemon-detail :pokemon="pokemon" />
-                
+
             </v-col>
         </v-row>
 
 
-        <div class="text-center" style="position: relative;">
+        <!-- <div class="text-center" style="position: relative;">
             <v-overlay contained :model-value="loading" class="align-center justify-center">
                 <v-progress-circular :size="50" color="primary" indeterminate size="64"></v-progress-circular>
             </v-overlay>
 
             <v-pagination prev-icon="fa fa-chevron-left" next-icon="fa fa-chevron-right" v-model="page"
-                :length="Math.ceil(count / 12)" :total-visible="5" @click="fetchPokemonList(page)" />
-        </div>
+                :length="Math.ceil(count / 20)" :total-visible="5" @click="fetchPokemonList(page)" />
+        </div> -->
+
+        <v-card v-intersect="loadMore"></v-card>
     </v-container>
 
     <!-- <div class="column">
@@ -36,7 +38,7 @@
             <v-img src="https://unsplash.com/photos/xJjzPaZnNdQ" class="bg-grey-lighten-2"></v-img>
         </div>
     </div> -->
-    <!-- <v-container style="position: relative;" class="mt-12">
+    <!-- <v-container style="position: relative;" class="mt-20">
         <v-list>
             <v-list-subheader>Pokemon List</v-list-subheader>
             <v-list-item v-for="pokemon in pokemonList" :key="pokemon.name" @click="selectPokemon(pokemon)">
@@ -46,7 +48,7 @@
         <v-overlay contained :model-value="loading" class="align-center justify-center">
             <v-progress-circular color="primary" indeterminate size="64"></v-progress-circular>
         </v-overlay>
-        <v-pagination v-model="page" :length="Math.ceil(count / 12)" :total-visible="5" @click="fetchPokemonList(page)" />
+        <v-pagination v-model="page" :length="Math.ceil(count / 20)" :total-visible="5" @click="fetchPokemonList(page)" />
     </v-container> -->
 </template>
   
@@ -79,7 +81,7 @@ export default {
         // fetchPokemonList(page) {
         //     this.loading = true;
         //     axios
-        //         .get(`https://pokeapi.co/api/v2/pokemon?limit=12&offset=${(page - 1) * 12}`)
+        //         .get(`https://pokeapi.co/api/v2/pokemon?limit=20&offset=${(page - 1) * 20}`)
         //         .then((response) => {
         //             this.pokemonList = response.data.results.map((pokemon) => ({
         //                 id: pokemon.url.match(/\/(\d+)\//)[1],
@@ -121,14 +123,13 @@ export default {
             await new Promise((resolve, reject) => {
                 this.fetchPokemonList(page, resolve, reject);
             });
-            console.log('fetchPokemonList completed');
             // Execute other code after fetchPokemonList is completed
         },
 
         fetchPokemonList(page) {
             this.loading = true;
             axios
-                .get(`https://pokeapi.co/api/v2/pokemon?limit=12&offset=${(page - 1) * 12}`)
+                .get(`https://pokeapi.co/api/v2/pokemon?limit=20&offset=${(page - 1) * 20}`)
                 .then(response => {
                     this.count = response.data.count;
                     this.pokemonList = response.data.results.map((pokemon) => ({
@@ -142,9 +143,9 @@ export default {
 
                     // Fetch the likes count for the Pokemon in the list
 
-                    
+
                     this.fetchPokemonLikeCount();
-                    
+
 
                 })
                 .catch((error) => {
@@ -152,6 +153,7 @@ export default {
                 })
                 .finally(() => {
                     this.loading = false;
+                    this.page++;
                 });
         },
 
@@ -178,18 +180,37 @@ export default {
         },
 
 
-        // fetchPokemonList(page) {
-        //     this.loading = true;
-        //     axios.get(`https://pokeapi.co/api/v2/pokemon?limit=12&offset=${(page - 1) * 12}`)
-        //         .then(response => {
-        //             this.pokemonList = response.data.results;
-        //             this.count = response.data.count;
-        //         })
-        //         .catch(error => {
-        //             console.log(error);
-        //         })
-        //         .finally(() => this.loading = false);
-        // },
+        async loadMore() {
+
+            if (this.page == 1)
+                return;
+
+            await setTimeout(async () => {
+                await this.loadPokemon(this.page);
+            }, 500)
+
+        },
+
+        async loadPokemon(page) {
+            try {
+                const response = await axios.get(`https://pokeapi.co/api/v2/pokemon?limit=20&offset=${(page - 1) * 20}`);
+
+                const newPokemons = response.data.results.map((pokemon) => ({
+                    id: pokemon.url.match(/\/(\d+)\//)[1],
+                    name: pokemon.name,
+                    likes_count: 0,
+                    liked: false,
+                    like_id: null,
+                    url: pokemon.url
+                }));
+
+                this.pokemonList = [...this.pokemonList, ...newPokemons];
+                this.page ++
+            } catch (error) {
+                console.log(error);
+            }
+        },
+
         selectPokemon(pokemon) {
             this.$emit('select', pokemon);
         },
