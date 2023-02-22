@@ -40,17 +40,23 @@ class LikeController extends Controller
         return response()->json(['like' => $like]);
     }
 
-    public function store($pokemon_id)
+    public function store(Request $request)
     {
-        $user = auth()->user();
-        $like = new Like([
-            'user_id' => $user->id,
-            'pokemon_id' => $pokemon_id,
-        ]);
-        $like->save();
+        // Check if the user has already liked 3 Pokemon
+        $userLikeCount = Like::where('user_id', auth()->id())->count();
+        if ($userLikeCount >= 3) {
+            return response()->json(['message' => 'You have already liked 3 Pokemon.'], 403);
+        }
 
-        return response()->json(['id' => $like->id]);
+        // Create a new like
+        $like = Like::updateOrCreate(
+            ['user_id' => auth()->id(), 'pokemon_id' => $request->pokemon_id],
+            ['type' => $request->type]
+        );
+
+        return response()->json(['like_id' => $like->id]);
     }
+
 
     public function destroy(Like $like)
     {

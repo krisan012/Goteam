@@ -13,9 +13,11 @@
                         </v-row>
                     </template>
                     <div class="align-self-center action-center">
-                        <v-btn size="x-large" :class="{ 'show-btns': isHovering }" :color="transparent" variant="text"
-                            icon="fas fa-heart"></v-btn>
-                        <v-btn size="x-large" :class="{ 'show-btns': isHovering }" :color="transparent" variant="text"
+                        <v-btn size="x-large" :class="{ 'show-btns': isHovering }"
+                            :color="(isHovering ? (pokemon.liked ? '#09f' : '#424242') : this.transparent)" variant="text"
+                            icon="fas fa-heart" @click.stop="likePokemon(pokemon)"></v-btn>
+                        <v-btn size="x-large" :class="{ 'show-btns': isHovering }"
+                            :color="(isHovering ? (pokemon.liked ? '#09f' : '#424242') : this.transparent)" variant="text"
                             icon="fas fa-thumbs-down"></v-btn>
                     </div>
                 </v-img>
@@ -37,6 +39,16 @@
             </v-card-actions> -->
             </v-card>
         </v-hover>
+
+        <v-snackbar v-model="snackbar" :timeout="2000" :color="snackbarColor">
+            {{ text }}
+
+            <template v-slot:actions>
+                <v-btn color="pink" variant="text" @click="snackbar = false">
+                    Close
+                </v-btn>
+            </template>
+        </v-snackbar>
     </v-container>
 </template>
   
@@ -61,7 +73,11 @@ export default {
 
     data() {
         return {
+            snackbarColor: "",
+            snackbar: false,
+            text: '',
             transparent: 'rgba(255, 255, 255, 0)',
+
         };
     },
 
@@ -75,11 +91,24 @@ export default {
                 });
             } else {
                 // Add a new like if the user has not yet liked the Pokemon
-                axios.post(`/likes/${pokemon.id}`).then((response) => {
+                
+                axios.post(`/likes`, {
+                    type: 1, //like
+                    pokemon_id: pokemon.id
+                }).then((response) => {
                     pokemon.liked = true;
                     pokemon.likes_count++;
-                    pokemon.like_id = response.data.id;
-                });
+                    pokemon.like_id = response.data.like_id;
+
+                    this.text = `You Added "${pokemon.name}" as your Pokemon`;
+                    this.snackbar = true;
+                    this.snackbarColor = "green";
+                })
+                .catch((error) => {
+                    this.text = error.response.data.message;
+                    this.snackbar = true;
+                    this.snackbarColor = "red";
+                })
             }
         },
     }
@@ -106,7 +135,7 @@ export default {
 }
 
 .show-btns {
-    color: rgb(70, 70, 70) !important;
+    color: rgb(70, 70, 70);
 }
 
 .action-center {

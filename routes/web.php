@@ -29,7 +29,7 @@ use Illuminate\Http\Request;
 Route::post('/login', [LoginController::class, 'authenticate']);
 Route::post('/register', [RegisterController::class, 'register']);
 
-Route::post('/likes/{pokemon_id}', [LikeController::class, 'store']);
+Route::post('/likes', [LikeController::class, 'store']);
 Route::delete('/likes/{like}', [LikeController::class, 'destroy']);
 
 Route::get('/user/likes', [LikeController::class, 'UserLikes']);
