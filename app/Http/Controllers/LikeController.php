@@ -14,15 +14,15 @@ class LikeController extends Controller
         return response()->json($likes);
     }
 
-    public function UserLikes(Request $request)
+    public function UserLikes()
     {
-        $user = auth()->user();
-        $pokemonIds = explode(',', $request->input('pokemon_ids'));
-        $likes = Like::where('user_id', $user->id)
-            ->whereIn('pokemon_id', $pokemonIds)
-            ->get();
+        $likes = Like::where("user_id", auth()->user()->id)->where("type", 1)->get();
+        $dislikes = Like::where("user_id", auth()->user()->id)->where("type", 0)->get();
 
-        return response()->json($likes);
+        return response()->json([
+            "likes" => $likes,
+            "dislikes" => $dislikes,
+        ]);
     }
 
     public function PokemonLikesCount($id)

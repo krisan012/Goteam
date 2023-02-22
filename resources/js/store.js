@@ -1,6 +1,10 @@
 import { createStore } from 'vuex';
+import like from './store/like'
 
 export default createStore({
+    modules:{
+        like
+    },
     state: {
         authenticated: localStorage.getItem('api_token') || false,
     },

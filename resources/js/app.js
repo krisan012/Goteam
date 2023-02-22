@@ -18,10 +18,27 @@ const vuetify = createVuetify({
 })
 
 
-createApp(App)
-    .use(router)
+
+const app = createApp(App);
+
+app.config.globalProperties.$fetchUserLikes = async function () {
+    try {
+        const response = await axios.get("/user/likes");
+
+        // Update the Vuex store with the user's likes and dislikes
+        store.commit("SET_USER_LIKES", response.data.likes);
+        store.commit("SET_USER_DISLIKES", response.data.dislikes);
+    } catch (error) {
+        console.log(error);
+    }
+};
+
+app.use(router)
     .use(store)
     .use(vuetify)
     .mount('#app');
+
+
+app.config.globalProperties.$fetchUserLikes();
 
 

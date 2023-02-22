@@ -14,10 +14,10 @@
                     </template>
                     <div class="align-self-center action-center">
                         <v-btn size="x-large" :class="{ 'show-btns': isHovering }"
-                            :color="(isHovering ? (pokemon.liked_type == 1 ? '#09f' : '#424242') : this.transparent)" variant="text"
+                            :color="(isHovering ? (isLiked ? '#09f' : '#424242') : this.transparent)" variant="text"
                             icon="fas fa-heart" @click.stop="likePokemon(pokemon)"></v-btn>
                         <v-btn size="x-large" :class="{ 'show-btns': isHovering }"
-                            :color="(isHovering ? (pokemon.liked_type == 0 ? '#09f' : '#424242') : this.transparent)" variant="text"
+                            :color="(isHovering ? (isDisliked ? '#09f' : '#424242') : this.transparent)" variant="text"
                             icon="fas fa-thumbs-down" @click.stop="dislikePokemon(pokemon)"></v-btn>
                     </div>
                 </v-img>
@@ -38,21 +38,51 @@
   
 <script>
 import axios from 'axios';
-import { isNil } from 'lodash';
+import { isNil, includes, toInteger, find } from 'lodash';
+import { mapGetters, mapMutations } from "vuex";
 
 export default {
     name: 'PokemonDetail',
     props: {
         pokemon: {
             type: Object,
-            required: true,
+            required: true
         },
     },
 
     computed: {
-        imagefetched() {
-            return isNil(this.pokemon.likes_fetch);
+        ...mapGetters(["userLikes", "userDislikes"]),
+        isLiked() {
+            return includes(this.userLikes.map(like => like.pokemon_id), toInteger(this.pokemon.id));
         },
+        isDisliked() {
+            return includes(this.userDislikes.map(like => like.pokemon_id), toInteger(this.pokemon.id));
+        },
+        likeType() {
+            const like = this.isLiked;
+            const dislike = this.isDisliked;
+            if (like) {
+                return 1; //like
+            } else if (dislike) {
+                return 0; //dislike
+            }
+            else {
+                return null;
+            }
+        },
+        likeId() {
+            const like = this.isLiked;
+            const dislike = this.isDisliked;
+            if (like) {
+                return find(this.userLikes, { pokemon_id: toInteger(this.pokemon.id) }).id; //like
+            } else if (dislike) {
+                return find(this.userDislikes, { pokemon_id: toInteger(this.pokemon.id) }).id; //dislike
+            } else {
+                return null;
+            }
+
+        }
+
     },
 
     data() {
@@ -66,57 +96,62 @@ export default {
     },
 
     methods: {
+        ...mapMutations(["ADD_NEW_USER_LIKE", "ADD_NEW_USER_DISLIKE", "REMOVE_LIKE", "REMOVE_DISLIKE"]),
+
         likePokemon(pokemon) {
-            if (pokemon.liked) {
+            if (this.likeType == 1) {
                 // Remove the like if the user has already liked the Pokemon
-                axios.delete(`/likes/${pokemon.like_id}`).then(() => {
-                    pokemon.liked = false;
-                    pokemon.likes_count--;
-                    pokemon.liked_type = null;
-                    pokemon.like_id = null;
+                axios.delete(`/likes/${this.likeId}`).then(() => {
+                    const id = toInteger(pokemon.id);
+                    this.REMOVE_LIKE(id)
                 });
             } else {
-                // Add a new like if the user has not yet liked the Pokemon
 
+                // Add a new like if the user has not yet liked the Pokemon
                 axios.post(`/likes`, {
                     type: 1, //like
                     pokemon_id: pokemon.id
                 }).then((response) => {
-                    pokemon.liked = true;
-                    pokemon.likes_count++;
-                    pokemon.like_id = response.data.like_id;
-                    pokemon.liked_type = 1;
+                    const likeObject = {
+                        id: toInteger(response.data.like_id),
+                        pokemon_id: toInteger(pokemon.id),
+                        type: 1
+                    }
+
+                    this.ADD_NEW_USER_LIKE(likeObject);
+                    this.REMOVE_DISLIKE(likeObject.pokemon_id);
 
                     this.text = `You Added "${pokemon.name}" as your Pokemon`;
                     this.snackbar = true;
                     this.snackbarColor = "green";
+                }).catch((error) => {
+                    this.text = error.response.data.message;
+                    this.snackbar = true;
+                    this.snackbarColor = "red";
                 })
-                    .catch((error) => {
-                        this.text = error.response.data.message;
-                        this.snackbar = true;
-                        this.snackbarColor = "red";
-                    })
             }
         },
 
         dislikePokemon(pokemon) {
-            if (pokemon.liked_type == 0) {
-                axios.delete(`/likes/${pokemon.like_id}`).then(() => {
-                    pokemon.liked = false;
-                    pokemon.likes_count--;
-                    pokemon.liked_type = null;
-                    pokemon.like_id = null;
+            if (this.likeType == 0) {
+                axios.delete(`/likes/${this.likeId}`).then(() => {
+                    const id = toInteger(pokemon.id);
+                    this.REMOVE_DISLIKE(id);
                 });
             }
             else {
                 axios.post(`/likes`, {
-                    type: 0, //like
-                    pokemon_id: pokemon.id
+                    type: 0, //dislike
+                    pokemon_id: toInteger(pokemon.id)
                 }).then((response) => {
-                    pokemon.liked = false;
-                    pokemon.likes_count--;
-                    pokemon.like_id = response.data.like_id;
-                    pokemon.liked_type = 0;
+                    const likeObject = {
+                        id: toInteger(response.data.like_id),
+                        pokemon_id: toInteger(pokemon.id),
+                        type: 0
+                    }
+
+                    this.ADD_NEW_USER_DISLIKE(likeObject);
+                    this.REMOVE_LIKE(likeObject.pokemon_id)
 
                     this.text = `You Added "${pokemon.name}" as your hated Pokemon`;
                     this.snackbar = true;
