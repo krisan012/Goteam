@@ -14,11 +14,11 @@
                     </template>
                     <div class="align-self-center action-center">
                         <v-btn size="x-large" :class="{ 'show-btns': isHovering }"
-                            :color="(isHovering ? (pokemon.liked ? '#09f' : '#424242') : this.transparent)" variant="text"
+                            :color="(isHovering ? (pokemon.liked_type == 1 ? '#09f' : '#424242') : this.transparent)" variant="text"
                             icon="fas fa-heart" @click.stop="likePokemon(pokemon)"></v-btn>
                         <v-btn size="x-large" :class="{ 'show-btns': isHovering }"
-                            :color="(isHovering ? (pokemon.liked ? '#09f' : '#424242') : this.transparent)" variant="text"
-                            icon="fas fa-thumbs-down"></v-btn>
+                            :color="(isHovering ? (pokemon.liked_type == 0 ? '#09f' : '#424242') : this.transparent)" variant="text"
+                            icon="fas fa-thumbs-down" @click.stop="dislikePokemon(pokemon)"></v-btn>
                     </div>
                 </v-img>
 
@@ -88,10 +88,12 @@ export default {
                 axios.delete(`/likes/${pokemon.like_id}`).then(() => {
                     pokemon.liked = false;
                     pokemon.likes_count--;
+                    pokemon.liked_type = null;
+                    pokemon.like_id = null;
                 });
             } else {
                 // Add a new like if the user has not yet liked the Pokemon
-                
+
                 axios.post(`/likes`, {
                     type: 1, //like
                     pokemon_id: pokemon.id
@@ -99,29 +101,51 @@ export default {
                     pokemon.liked = true;
                     pokemon.likes_count++;
                     pokemon.like_id = response.data.like_id;
+                    pokemon.liked_type = 1;
 
                     this.text = `You Added "${pokemon.name}" as your Pokemon`;
                     this.snackbar = true;
                     this.snackbarColor = "green";
                 })
-                .catch((error) => {
-                    this.text = error.response.data.message;
-                    this.snackbar = true;
-                    this.snackbarColor = "red";
-                })
+                    .catch((error) => {
+                        this.text = error.response.data.message;
+                        this.snackbar = true;
+                        this.snackbarColor = "red";
+                    })
             }
         },
-    }
 
-    // mounted() {
-    //     axios.get(this.pokemonUrl)
-    //         .then(response => {
-    //             this.pokemon = response.data;
-    //         })
-    //         .catch(error => {
-    //             console.log(error);
-    //         });
-    // },
+        dislikePokemon(pokemon) {
+            if (pokemon.liked_type == 0) {
+                axios.delete(`/likes/${pokemon.like_id}`).then(() => {
+                    pokemon.liked = false;
+                    pokemon.likes_count--;
+                    pokemon.liked_type = null;
+                    pokemon.like_id = null;
+                });
+            }
+            else {
+                axios.post(`/likes`, {
+                    type: 0, //like
+                    pokemon_id: pokemon.id
+                }).then((response) => {
+                    pokemon.liked = false;
+                    pokemon.likes_count--;
+                    pokemon.like_id = response.data.like_id;
+                    pokemon.liked_type = 0;
+
+                    this.text = `You Added "${pokemon.name}" as your hated Pokemon`;
+                    this.snackbar = true;
+                    this.snackbarColor = "grey";
+                })
+                    .catch((error) => {
+                        this.text = error.response.data.message;
+                        this.snackbar = true;
+                        this.snackbarColor = "red";
+                    })
+            }
+        }
+    }
 };
 </script>
   

@@ -11,7 +11,8 @@ class Like extends Model
 
     protected $fillable = [
         'user_id',
-        'pokemon_id'
+        'pokemon_id',
+        'type'
     ];
 
     public function user()

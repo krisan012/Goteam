@@ -42,10 +42,15 @@ class LikeController extends Controller
 
     public function store(Request $request)
     {
-        // Check if the user has already liked 3 Pokemon
-        $userLikeCount = Like::where('user_id', auth()->id())->count();
-        if ($userLikeCount >= 3) {
+        // Count the number of likes and dislikes for the current user
+        $userLikes = Like::where('user_id', auth()->id())->where('type', 1)->count();
+        $userDislikes = Like::where('user_id', auth()->id())->where('type', 0)->count();
+
+        // Return an error response if the user has already liked 3 Pokemon or disliked 3 Pokemon
+        if ($request->type === 1 && $userLikes >= 3) {
             return response()->json(['message' => 'You have already liked 3 Pokemon.'], 403);
+        } elseif ($request->type === 0 && $userDislikes >= 3) {
+            return response()->json(['message' => 'You have already disliked 3 Pokemon.'], 403);
         }
 
         // Create a new like

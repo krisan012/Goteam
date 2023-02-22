@@ -167,7 +167,8 @@ export default {
                         responses.forEach((response, index) => {
                             this.pokemonList[index].likes_count = response.data.count;
                             if (!isNil(response.data.like)) {
-                                this.pokemonList[index].liked = true;
+                                this.pokemonList[index].liked = response.data.like.type == 1 ? true : false;
+                                this.pokemonList[index].liked_type = response.data.like.type; //1 = like 0 = dislike
                                 this.pokemonList[index].like_id = response.data.like.id;
                             }
 
