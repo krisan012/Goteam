@@ -18,4 +18,11 @@ class Like extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function hasLikedPokemon($pokemon_id)
+    {
+        return $this->where('pokemon_id', $pokemon_id)
+            ->where('user_id', auth()->id())
+            ->first();
+    }
 }

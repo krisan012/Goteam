@@ -28,7 +28,8 @@ class LikeController extends Controller
     public function PokemonLikesCount($id)
     {
         $count = Like::where('pokemon_id', $id)->count();
-        return response()->json(['count' => $count]);
+        $like = (new Like)->hasLikedPokemon($id);
+        return response()->json(['count' => $count, 'like' => $like]);
     }
 
     public function find($pokemon_id)
@@ -38,8 +39,6 @@ class LikeController extends Controller
             ->first();
         return response()->json(['like' => $like]);
     }
-
-
 
     public function store($pokemon_id)
     {

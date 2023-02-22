@@ -3,18 +3,8 @@
         <v-row class="mx-lg-auto">
             <v-col v-for="pokemon in pokemonList" :key="pokemon.name" @click="selectPokemon(pokemon)"
                 class="d-flex child-flex pa-2" cols="12" lg="3" md="4" sm="6" align-self="center">
-                    <pokemon-detail :pokemon="pokemon" />
-                <!-- <v-img
-                    :src="`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${pokemon.id}.png`"
-                    :lazy-src="`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokemon.id}.png`"
-                    aspect-ratio="1" cover class="bg-grey-lighten-2">
-                    <template v-slot:placeholder>
-                        <v-row class="fill-height ma-0" align="center" justify="center">
-                            <v-progress-circular indeterminate color="grey-lighten-5"></v-progress-circular>
-                        </v-row>
-                    </template>
-                </v-img> -->
-
+                <pokemon-detail :pokemon="pokemon" />
+                
             </v-col>
         </v-row>
 
@@ -24,9 +14,8 @@
                 <v-progress-circular :size="50" color="primary" indeterminate size="64"></v-progress-circular>
             </v-overlay>
 
-            <!-- <v-pagination v-model="page" :length="15" :total-visible="7"></v-pagination> -->
             <v-pagination prev-icon="fa fa-chevron-left" next-icon="fa fa-chevron-right" v-model="page"
-                :length="Math.ceil(count / 10)" :total-visible="5" @click="fetchPokemonList(page)" />
+                :length="Math.ceil(count / 12)" :total-visible="5" @click="fetchPokemonList(page)" />
         </div>
     </v-container>
 
@@ -47,7 +36,7 @@
             <v-img src="https://unsplash.com/photos/xJjzPaZnNdQ" class="bg-grey-lighten-2"></v-img>
         </div>
     </div> -->
-    <!-- <v-container style="position: relative;" class="mt-10">
+    <!-- <v-container style="position: relative;" class="mt-12">
         <v-list>
             <v-list-subheader>Pokemon List</v-list-subheader>
             <v-list-item v-for="pokemon in pokemonList" :key="pokemon.name" @click="selectPokemon(pokemon)">
@@ -57,7 +46,7 @@
         <v-overlay contained :model-value="loading" class="align-center justify-center">
             <v-progress-circular color="primary" indeterminate size="64"></v-progress-circular>
         </v-overlay>
-        <v-pagination v-model="page" :length="Math.ceil(count / 10)" :total-visible="5" @click="fetchPokemonList(page)" />
+        <v-pagination v-model="page" :length="Math.ceil(count / 12)" :total-visible="5" @click="fetchPokemonList(page)" />
     </v-container> -->
 </template>
   
@@ -65,6 +54,7 @@
 <script>
 import axios from 'axios';
 import PokemonDetail from './PokemonDetail.vue';
+import { isNil } from 'lodash';
 
 export default {
     name: 'PokemonList',
@@ -81,7 +71,7 @@ export default {
     },
 
     mounted() {
-        this.fetchPokemonList(this.page);
+        this.fetchPokemonListAndWait(this.page);
     },
 
     methods: {
@@ -89,7 +79,7 @@ export default {
         // fetchPokemonList(page) {
         //     this.loading = true;
         //     axios
-        //         .get(`https://pokeapi.co/api/v2/pokemon?limit=10&offset=${(page - 1) * 10}`)
+        //         .get(`https://pokeapi.co/api/v2/pokemon?limit=12&offset=${(page - 1) * 12}`)
         //         .then((response) => {
         //             this.pokemonList = response.data.results.map((pokemon) => ({
         //                 id: pokemon.url.match(/\/(\d+)\//)[1],
@@ -127,12 +117,19 @@ export default {
         //         });
         // },
 
+        async fetchPokemonListAndWait(page) {
+            await new Promise((resolve, reject) => {
+                this.fetchPokemonList(page, resolve, reject);
+            });
+            console.log('fetchPokemonList completed');
+            // Execute other code after fetchPokemonList is completed
+        },
 
-        async fetchPokemonList(page) {
+        fetchPokemonList(page) {
             this.loading = true;
-            await axios
-                .get(`https://pokeapi.co/api/v2/pokemon?limit=10&offset=${(page - 1) * 10}`)
-                .then(async response => {
+            axios
+                .get(`https://pokeapi.co/api/v2/pokemon?limit=12&offset=${(page - 1) * 12}`)
+                .then(response => {
                     this.count = response.data.count;
                     this.pokemonList = response.data.results.map((pokemon) => ({
                         id: pokemon.url.match(/\/(\d+)\//)[1],
@@ -144,19 +141,11 @@ export default {
                     }));
 
                     // Fetch the likes count for the Pokemon in the list
-                    await axios
-                        .all(
-                            this.pokemonList.map((pokemon) =>
-                                axios.get(`/pokemon/${pokemon.id}/likes/count`)
-                            )
-                        )
-                        .then(
-                            axios.spread(async (...responses) => {
-                                await responses.forEach((response, index) => {
-                                    this.pokemonList[index].likes_count = response.data.count;
-                                });
-                            })
-                        );
+
+                    
+                    this.fetchPokemonLikeCount();
+                    
+
                 })
                 .catch((error) => {
                     console.log(error);
@@ -166,11 +155,31 @@ export default {
                 });
         },
 
+        fetchPokemonLikeCount() {
+            axios
+                .all(
+                    this.pokemonList.map((pokemon) =>
+                        axios.get(`/pokemon/${pokemon.id}/likes/count`)
+                    )
+                )
+                .then(
+                    axios.spread((...responses) => {
+                        responses.forEach((response, index) => {
+                            this.pokemonList[index].likes_count = response.data.count;
+                            if (!isNil(response.data.like)) {
+                                this.pokemonList[index].liked = true;
+                                this.pokemonList[index].like_id = response.data.like.id;
+                            }
+
+                        });
+                    })
+                );
+        },
 
 
         // fetchPokemonList(page) {
         //     this.loading = true;
-        //     axios.get(`https://pokeapi.co/api/v2/pokemon?limit=10&offset=${(page - 1) * 10}`)
+        //     axios.get(`https://pokeapi.co/api/v2/pokemon?limit=12&offset=${(page - 1) * 12}`)
         //         .then(response => {
         //             this.pokemonList = response.data.results;
         //             this.count = response.data.count;
