@@ -8,48 +8,24 @@
             </v-col>
         </v-row>
 
+        <v-row justify="center" v-show="loading">
+            <v-col cols="4" color="bg-grey-lighten-2">
+                <v-card class="pa-2 ma-2" color="bg-grey-lighten-2">
+                    <li class="blog-post o-media">
 
-        <!-- <div class="text-center" style="position: relative;">
-            <v-overlay contained :model-value="loading" class="align-center justify-center">
-                <v-progress-circular :size="50" color="primary" indeterminate size="64"></v-progress-circular>
-            </v-overlay>
+                        <div class="o-media__body">
+                            <div class="o-media__figure">
+                                <span class="skeleton-box"></span>
+                            </div>
+                        </div>
 
-            <v-pagination prev-icon="fa fa-chevron-left" next-icon="fa fa-chevron-right" v-model="page"
-                :length="Math.ceil(count / 20)" :total-visible="5" @click="fetchPokemonList(page)" />
-        </div> -->
+                    </li>
+                </v-card>
+            </v-col>
+        </v-row>
 
         <v-card v-intersect="loadMore"></v-card>
     </v-container>
-
-    <!-- <div class="column">
-        <div class="photo">
-            <v-img src="https://unsplash.com/photos/tCbpaUma2cQ" class="bg-grey-lighten-2"></v-img>
-        </div>
-        <div class="photo">
-            <v-img src="https://unsplash.com/photos/M176ghBQhC0" class="bg-grey-lighten-2"></v-img>
-        </div>
-        <div class="photo">
-            <v-img src="https://unsplash.com/photos/hoUDqHwhhfw" class="bg-grey-lighten-2"></v-img>
-        </div>
-        <div class="photo">
-            <v-img src="https://unsplash.com/photos/3Ijc0AQz1DY" class="bg-grey-lighten-2"></v-img>
-        </div>
-        <div class="photo">
-            <v-img src="https://unsplash.com/photos/xJjzPaZnNdQ" class="bg-grey-lighten-2"></v-img>
-        </div>
-    </div> -->
-    <!-- <v-container style="position: relative;" class="mt-20">
-        <v-list>
-            <v-list-subheader>Pokemon List</v-list-subheader>
-            <v-list-item v-for="pokemon in pokemonList" :key="pokemon.name" @click="selectPokemon(pokemon)">
-                <v-list-item-title>{{ pokemon.name }}</v-list-item-title>
-            </v-list-item>
-        </v-list>
-        <v-overlay contained :model-value="loading" class="align-center justify-center">
-            <v-progress-circular color="primary" indeterminate size="64"></v-progress-circular>
-        </v-overlay>
-        <v-pagination v-model="page" :length="Math.ceil(count / 20)" :total-visible="5" @click="fetchPokemonList(page)" />
-    </v-container> -->
 </template>
   
   
@@ -78,52 +54,11 @@ export default {
 
     methods: {
 
-        // fetchPokemonList(page) {
-        //     this.loading = true;
-        //     axios
-        //         .get(`https://pokeapi.co/api/v2/pokemon?limit=20&offset=${(page - 1) * 20}`)
-        //         .then((response) => {
-        //             this.pokemonList = response.data.results.map((pokemon) => ({
-        //                 id: pokemon.url.match(/\/(\d+)\//)[1],
-        //                 name: pokemon.name,
-        //                 likes_count: 0,
-        //                 liked: false,
-        //                 like_id: null,
-        //                 url: pokemon.url
-        //             }));
-
-        //             // Fetch the current user's likes for the Pokemon in the list
-        //             axios
-        //                 .get('/user/likes', {
-        //                     params: {
-        //                         pokemon_ids: this.pokemonList.map((pokemon) => pokemon.id).join(','),
-        //                     },
-        //                 })
-        //                 .then((response) => {
-        //                     const likes = response.data;
-        //                     this.pokemonList.forEach((pokemon) => {
-        //                         const like = likes.find((like) => like.pokemon_id == pokemon.id);
-        //                         if (like) {
-        //                             pokemon.liked = true;
-        //                             pokemon.likes_count = 1;
-        //                             pokemon.like_id = like.id;
-        //                         }
-        //                     });
-        //                 });
-        //         })
-        //         .catch((error) => {
-        //             console.log(error);
-        //         })
-        //         .finally(() => {
-        //             this.loading = false;
-        //         });
-        // },
 
         async fetchPokemonListAndWait(page) {
             await new Promise((resolve, reject) => {
                 this.fetchPokemonList(page, resolve, reject);
             });
-            // Execute other code after fetchPokemonList is completed
         },
 
         fetchPokemonList(page) {
@@ -140,9 +75,6 @@ export default {
                         like_id: null,
                         url: pokemon.url
                     }));
-
-                    // Fetch the likes count for the Pokemon in the list
-
 
                     this.fetchPokemonLikeCount();
 
@@ -186,7 +118,9 @@ export default {
                 return;
 
             await setTimeout(async () => {
+                this.loading = true;
                 await this.loadPokemon(this.page);
+                this.loading = false;
             }, 500)
 
         },
@@ -205,7 +139,7 @@ export default {
                 }));
 
                 this.pokemonList = [...this.pokemonList, ...newPokemons];
-                this.page ++
+                this.page++
             } catch (error) {
                 console.log(error);
             }
@@ -219,3 +153,12 @@ export default {
 };
 </script>
   
+
+<style scoped>
+.skeleton-box {
+    display: block;
+    width: 250px;
+    height: 160px;
+    margin: 0 auto;
+}
+</style>
