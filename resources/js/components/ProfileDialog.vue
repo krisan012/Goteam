@@ -11,12 +11,13 @@
 
                 <v-spacer></v-spacer>
 
-                <v-btn icon>
+                <v-btn icon v-if="parseInt(profile.id) == parseInt(this.$store.state.authId)"
+                    @click="openUserDetailEditDialog">
                     <v-icon>fa fa-keyboard</v-icon>
                 </v-btn>
             </v-toolbar>
 
-            <v-row justify="center">
+            <v-row justify="center" style="max-height: 220px;">
                 <v-col cols="12">
                     <v-avatar size="90" style="top: -30px;display: block; margin: 0 auto;" class="elevation-20">
                         <v-img src="https://cdn.vuetifyjs.com/images/cards/sunshine.jpg" height="200px" cover></v-img>
@@ -90,17 +91,21 @@
             <pokemon-detail-dialog :dialog.sync="pokemonDialog" :pokemon="pokemonData"
                 @update:showpokemon="closePokemonDialog" />
 
+            <edit-user-detail-dialog :editDialog.sync="userDetailEditDialog" :user="profile"
+                @update:showeditdialog="closeUserDetailEditDialog" />
         </v-card>
     </v-dialog>
 </template>
 
 <script>
 import PokemonDetailDialog from './PokemonDetailDialog.vue';
+import EditUserDetailDialog from './EditUserDetailDialog.vue';
 import { mapGetters } from "vuex";
 
 export default {
     components: {
         PokemonDetailDialog,
+        EditUserDetailDialog
     },
     props: {
         profile: {
@@ -140,6 +145,7 @@ export default {
             isFullScreen: window.innerWidth <= 760,
             pokemonData: {},
             pokemonDialog: false,
+            userDetailEditDialog: false
         }
     },
 
@@ -157,6 +163,15 @@ export default {
 
         closePokemonDialog() {
             this.pokemonDialog = false;
+        },
+
+
+        openUserDetailEditDialog() {
+            this.userDetailEditDialog = true;
+        },
+
+        closeUserDetailEditDialog() {
+            this.userDetailEditDialog = false;
         },
     }
 

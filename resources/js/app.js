@@ -18,6 +18,8 @@ const vuetify = createVuetify({
     directives,
 })
 
+import VueDatePicker from '@vuepic/vue-datepicker';
+import '@vuepic/vue-datepicker/dist/main.css'
 
 
 const app = createApp(App);
@@ -37,6 +39,8 @@ app.config.globalProperties.$fetchUserLikes = async function () {
     }
 };
 app.config.globalProperties.$axios = axios;
+
+app.component('VueDatePicker', VueDatePicker);
 
 app.use(router)
     .use(store)

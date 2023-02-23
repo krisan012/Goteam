@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Redis;
+use Illuminate\Validation\Rule;
 
 class UserController extends Controller
 {
@@ -30,5 +33,52 @@ class UserController extends Controller
         ];
 
         return response()->json($userData);
+    }
+
+    public function store(Request $request)
+    {
+        $validatedData = $request->validate([
+            'email' => [
+                'nullable',
+                'email',
+                'max:255',
+                Rule::unique('users')->ignore($request->id),
+            ],
+            'password' => 'nullable|string|min:8|max:255',
+            'first_name' => 'nullable|string|max:255',
+            'last_name' => 'nullable|string|max:255',
+            'birthday' => 'nullable|date_format:Y-m-d'
+        ]);
+        
+        if(isset($request->password))
+        {
+            $user = User::updateOrCreate(
+                ['id' => $request->id],
+                [
+                    'name' => $request->first_name . ' ' . $request->last_name,
+                    'email' => $validatedData['email'],
+                    'password' => Hash::make($validatedData['password']),
+                    'first_name' => $validatedData['first_name'],
+                    'last_name' => $validatedData['last_name'],
+                    'birthday' => $validatedData['birthday']
+                ]
+            );
+        } else {
+            $user = User::updateOrCreate(
+                ['id' => $request->id],
+                [
+                    'name' => $request->first_name . ' ' . $request->last_name,
+                    'email' => $validatedData['email'],
+                    'first_name' => $validatedData['first_name'],
+                    'last_name' => $validatedData['last_name'],
+                    'birthday' => $validatedData['birthday']
+                ]
+            );
+        }
+        
+
+        $user->save();
+
+        return response()->json(['user' => $user], 201);
     }
 }

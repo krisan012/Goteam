@@ -37,6 +37,8 @@ Route::middleware(['auth.web'])->group(function () {
     Route::get('/get/users', [UserController::class, 'index']);
 
     Route::get('/get/current-user', [UserController::class, 'getCurrentUser']);
+    
+    Route::post('/user/save', [UserController::class, 'store']);
 });
 
 
