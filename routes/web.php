@@ -18,15 +18,6 @@ use Illuminate\Http\Request;
 |
 */
 
-// Route::get('/', function () {
-//     return view('welcome');
-// });
-
-
-// Route::get('/{any}', function () {
-//     return view('layouts.app');
-// })->where('any', '.*');
-
 Route::post('/login', [LoginController::class, 'authenticate']);
 Route::post('/register', [RegisterController::class, 'register']);
 

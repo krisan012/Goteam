@@ -33,8 +33,9 @@
 
             <div class="ma-5 text-center">
                 <v-row justify="center" dense>
-                    <v-col cols="12" lg="4" md="4" sm="6" v-for="like in profile.likes" :key="like.id">
-                        <v-avatar size="120" class="elevation-5 ml-2 mr-2 zoom" @click="FetchPokemonData">
+                    <v-col cols="12" lg="4" md="4" sm="6" v-for="like in userLikes" :key="like.id">
+                        <v-avatar size="120" class="elevation-5 ml-2 mr-2 zoom" @click="FetchPokemonData(like.pokemon_id)"
+                            style="cursor: pointer;">
                             <v-img
                                 :src="`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${like.pokemon_id}.png`"
                                 height="120px" contain></v-img>
@@ -49,7 +50,7 @@
 
             <div class="ma-5 mb-15 text-center">
                 <v-row justify="center" dense>
-                    <v-col cols="12" lg="4" md="4" sm="6" v-for="dislike in profile.dislikes" :key="dislike.id">
+                    <v-col cols="12" lg="4" md="4" sm="6" v-for="dislike in userDislikes" :key="dislike.id">
                         <v-avatar size="120" class="elevation-5 zoom">
                             <!-- <v-tooltip activator="parent" location="end">{{ like.name }}</v-tooltip> -->
                             <v-img
@@ -61,7 +62,7 @@
                 </v-row>
             </div>
 
-            <pokemon-detail-dialog :dialog.sync="pokemonDialog" :pokemon="pokemonData" @update:show="closePokemonDialog" />
+            <pokemon-detail-dialog :dialog.sync="pokemonDialog" :pokemon="pokemonData" @update:showpokemon="closePokemonDialog" />
 
         </v-card>
     </v-dialog>
@@ -69,7 +70,7 @@
 
 <script>
 import PokemonDetailDialog from './PokemonDetailDialog.vue';
-
+import { mapGetters } from "vuex";
 
 export default {
     components: {
@@ -96,6 +97,7 @@ export default {
         window.removeEventListener('resize', this.onResize);
     },
     computed: {
+        ...mapGetters(["userLikes", "userDislikes"]),
         showProfile: {
             get() {
                 return this.dialog;
@@ -121,8 +123,9 @@ export default {
             this.isFullScreen = this.innerWidth <= 760
         },
 
-        FetchPokemonData()
-        {
+        async FetchPokemonData(pokemon_id) {
+            const response = await axios.get(`https://pokeapi.co/api/v2/pokemon/${pokemon_id}`);
+            this.pokemonData = response.data
             this.pokemonDialog = true;
         },
 
