@@ -14,6 +14,7 @@ export default createStore({
             localStorage.setItem('api_token', value);
         },
         unsetAuthenticated(state) {
+            console.log('unsetting the state')
             state.authenticated = false;
             localStorage.removeItem('api_token');
         },

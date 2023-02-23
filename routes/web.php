@@ -30,23 +30,25 @@ use Illuminate\Http\Request;
 Route::post('/login', [LoginController::class, 'authenticate']);
 Route::post('/register', [RegisterController::class, 'register']);
 
-Route::post('/likes', [LikeController::class, 'store']);
-Route::delete('/likes/{like}', [LikeController::class, 'destroy']);
-
-Route::get('/user/likes', [LikeController::class, 'UserLikes']);
-
 Route::get('/pokemon/{pokemon_id}/likes/count', [LikeController::class, 'PokemonLikesCount']);
 
-Route::get('/pokemon/find/like/{pokemon_id}', [LikeController::class, 'find']); // check if the user already like the pokemon
-Route::get('/pokemon/{pokemon_id}/likes', [LikeController::class, 'index']);
+Route::middleware(['auth.web'])->group(function () {
+    Route::post('/likes', [LikeController::class, 'store']);
+    Route::delete('/likes/{like}', [LikeController::class, 'destroy']);
 
-Route::get('/get/users', [UserController::class, 'index']);
+    Route::get('/user/likes', [LikeController::class, 'UserLikes']);
 
-Route::get('/get/current-user', [UserController::class, 'getCurrentUser']);
+   
+
+    Route::get('/pokemon/find/like/{pokemon_id}', [LikeController::class, 'find']); // check if the user already like the pokemon
+    Route::get('/pokemon/{pokemon_id}/likes', [LikeController::class, 'index']);
+
+    Route::get('/get/users', [UserController::class, 'index']);
+
+    Route::get('/get/current-user', [UserController::class, 'getCurrentUser']);
+});
 
 
-Route::get('/{vue_capture?}', function() {
+Route::get('/{vue_capture?}', function () {
     return view('layouts.app');
 })->where('vue_capture', '[\/\w\.-]*');
-
-

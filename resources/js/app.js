@@ -4,6 +4,7 @@ import { createApp } from 'vue';
 import App from './App.vue';
 import router from './router';
 import store from './store';
+import axios from './axios';
 
 import 'vuetify/styles'
 import { createVuetify } from 'vuetify'
@@ -23,15 +24,19 @@ const app = createApp(App);
 
 app.config.globalProperties.$fetchUserLikes = async function () {
     try {
-        const response = await axios.get("/user/likes");
+        if (store.state.authenticated) {
+            const response = await axios.get("/user/likes");
 
-        // Update the Vuex store with the user's likes and dislikes
-        store.commit("SET_USER_LIKES", response.data.likes);
-        store.commit("SET_USER_DISLIKES", response.data.dislikes);
+            // Update the Vuex store with the user's likes and dislikes
+            store.commit("SET_USER_LIKES", response.data.likes);
+            store.commit("SET_USER_DISLIKES", response.data.dislikes);
+        }
+
     } catch (error) {
         console.log(error);
     }
 };
+app.config.globalProperties.$axios = axios;
 
 app.use(router)
     .use(store)
