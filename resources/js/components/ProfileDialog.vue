@@ -1,6 +1,5 @@
 <template>
-    <v-dialog v-model="dialog" persistent width="auto" :fullscreen="isFullScreen" 
-        transition="dialog-bottom-transition">
+    <v-dialog v-model="dialog" persistent width="auto" :fullscreen="isFullScreen" transition="dialog-bottom-transition">
 
         <v-card>
             <v-toolbar prominent extended>
@@ -13,7 +12,7 @@
                 <v-spacer></v-spacer>
 
                 <v-btn icon>
-                    <v-icon>fa fa-heart</v-icon>
+                    <v-icon>fa fa-keyboard</v-icon>
                 </v-btn>
             </v-toolbar>
 
@@ -35,7 +34,7 @@
             <div class="ma-5 text-center">
                 <v-row justify="center" dense>
                     <v-col cols="12" lg="4" md="4" sm="6" v-for="like in profile.likes" :key="like.id">
-                        <v-avatar size="120" class="elevation-5 ml-2 mr-2 zoom">
+                        <v-avatar size="120" class="elevation-5 ml-2 mr-2 zoom" @click="FetchPokemonData">
                             <v-img
                                 :src="`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${like.pokemon_id}.png`"
                                 height="120px" contain></v-img>
@@ -62,13 +61,20 @@
                 </v-row>
             </div>
 
+            <pokemon-detail-dialog :dialog.sync="pokemonDialog" :pokemon="pokemonData" @update:show="closePokemonDialog" />
 
         </v-card>
     </v-dialog>
 </template>
 
 <script>
+import PokemonDetailDialog from './PokemonDetailDialog.vue';
+
+
 export default {
+    components: {
+        PokemonDetailDialog,
+    },
     props: {
         profile: {
             type: Object,
@@ -103,7 +109,9 @@ export default {
     data() {
         return {
             innerWidth: window.innerWidth,
-            isFullScreen: window.innerWidth <= 760
+            isFullScreen: window.innerWidth <= 760,
+            pokemonData: {},
+            pokemonDialog: false,
         }
     },
 
@@ -111,7 +119,16 @@ export default {
         onResize() {
             this.innerWidth = window.innerWidth
             this.isFullScreen = this.innerWidth <= 760
-        }
+        },
+
+        FetchPokemonData()
+        {
+            this.pokemonDialog = true;
+        },
+
+        closePokemonDialog() {
+            this.pokemonDialog = false;
+        },
     }
 
 }
