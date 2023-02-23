@@ -1,7 +1,7 @@
 <template>
     <v-dialog v-model="dialog" persistent width="auto" :fullscreen="isFullScreen" transition="dialog-bottom-transition">
 
-        <v-card>
+        <v-card class="profile-card">
             <v-toolbar prominent extended>
                 <v-btn icon @click="showProfile = false">
                     <v-icon>fa fa-arrow-left</v-icon>
@@ -34,7 +34,8 @@
             <div class="ma-5 text-center">
                 <v-row justify="center" dense>
 
-                    <v-col v-if="parseInt(profile.id) == parseInt(this.$store.state.authId)" cols="12" lg="4" md="4" sm="6" v-for="like in userLikes" :key="like.id">
+                    <v-col v-if="parseInt(profile.id) == parseInt(this.$store.state.authId)" cols="12" lg="4" md="4" sm="6"
+                        v-for="like in userLikes" :key="like.id" class="profile-pokemon">
                         <v-avatar size="120" class="elevation-5 ml-2 mr-2 zoom" @click="FetchPokemonData(like.pokemon_id)"
                             style="cursor: pointer;">
                             <v-img
@@ -43,7 +44,8 @@
                         </v-avatar>
                     </v-col>
 
-                    <v-col v-else cols="12" lg="4" md="4" sm="6" v-for="like in profile.likes" :key="like.pokemon_id">
+                    <v-col v-else cols="12" lg="4" md="4" sm="6" v-for="like in profile.likes" :key="like.pokemon_id"
+                        class="profile-pokemon">
                         <v-avatar size="120" class="elevation-5 ml-2 mr-2 zoom" @click="FetchPokemonData(like.pokemon_id)"
                             style="cursor: pointer;">
                             <v-img
@@ -60,7 +62,20 @@
 
             <div class="ma-5 mb-15 text-center">
                 <v-row justify="center" dense>
-                    <v-col cols="12" lg="4" md="4" sm="6" v-for="dislike in userDislikes" :key="dislike.id">
+                    <v-col v-if="parseInt(profile.id) == parseInt(this.$store.state.authId)" cols="12" lg="4" md="4" sm="6"
+                        v-for="dislike in userDislikes" :key="dislike.id" class="profile-pokemon"
+                        @click="FetchPokemonData(dislike.pokemon_id)" style="cursor: pointer;">
+                        <v-avatar size="120" class="elevation-5 zoom">
+                            <!-- <v-tooltip activator="parent" location="end">{{ like.name }}</v-tooltip> -->
+                            <v-img
+                                :src="`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${dislike.pokemon_id}.png`"
+                                height="80px" contain></v-img>
+                        </v-avatar>
+                    </v-col>
+
+                    <v-col v-else cols="12" lg="4" md="4" sm="6" v-for="dislike in profile.dislikes"
+                        :key="dislike.pokemon_id" class="profile-pokemon" @click="FetchPokemonData(dislike.pokemon_id)"
+                        style="cursor: pointer;">
                         <v-avatar size="120" class="elevation-5 zoom">
                             <!-- <v-tooltip activator="parent" location="end">{{ like.name }}</v-tooltip> -->
                             <v-img
@@ -72,7 +87,8 @@
                 </v-row>
             </div>
 
-            <pokemon-detail-dialog :dialog.sync="pokemonDialog" :pokemon="pokemonData" @update:showpokemon="closePokemonDialog" />
+            <pokemon-detail-dialog :dialog.sync="pokemonDialog" :pokemon="pokemonData"
+                @update:showpokemon="closePokemonDialog" />
 
         </v-card>
     </v-dialog>
@@ -147,10 +163,17 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 .profile-card {
     min-width: 450px;
 }
+
+@media (max-width: 720px) {
+    .profile-card {
+        width: 100vw;
+    }
+}
+
 
 .zoom {
     transition: transform .2s;
@@ -160,5 +183,9 @@ export default {
     background: #fff;
     transform: scale(1.5);
     /* (150% zoom - Note: if the zoom is too large, it will go outside of the viewport) */
+}
+
+.profile-pokemon {
+    min-width: 160px;
 }
 </style>
