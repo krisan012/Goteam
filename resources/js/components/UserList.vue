@@ -12,7 +12,7 @@
                                 {{ user.name }}
                             </v-card-title>
 
-                            <v-card-subtitle>12/19/1994</v-card-subtitle>
+                            <v-card-subtitle>{{ user.birthday }}</v-card-subtitle>
 
                             <v-card-actions class="pb-0">
                                 <div class="v-btn v-btn--icon v-theme--light v-btn--density-default v-btn--size-default v-btn--variant-text ms-2"
@@ -46,6 +46,33 @@
             </v-col>
         </v-row>
 
+        <v-row justify="center" v-show="loading">
+            <v-col cols="4" color="grey-lighten-5">
+                <v-card class="pa-2 ma-2">
+                    <li class="blog-post o-media">
+
+                        <div class="o-media__body">
+                            <div class="o-vertical-spacing">
+                                <h3 class="blog-post__headline">
+                                    <span class="skeleton-box" style="width:55%;"></span>
+                                </h3>
+                                <p>
+                                    <span class="skeleton-box" style="width:80%;"></span>
+                                    <span class="skeleton-box" style="width:90%;"></span>
+                                </p>
+                                <div class="blog-post__meta">
+                                    <span class="skeleton-box" style="width:70px;"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="o-media__figure">
+                            <span class="skeleton-box" style="width:100px;height:80px;"></span>
+                        </div>
+                    </li>
+                </v-card>
+            </v-col>
+        </v-row>
+
 
         <profile-dialog :dialog.sync="dialog" :profile="profileSelect" @update:show="closeProfileDialog" />
         <!-- <template>
@@ -65,7 +92,7 @@
         </template> -->
 
 
-        <!-- <v-card v-intersect="loadMore"></v-card> -->
+        <v-card v-intersect="loadMore"></v-card>
     </v-container>
 </template>
   
@@ -82,7 +109,7 @@ export default {
             users: [],
             profileSelect: {},
             page: 1,
-            loading: false,
+            loading: true,
             lastpage: 1,
             dialog: false
         };
@@ -133,7 +160,7 @@ export default {
             this.loading = false;
         },
 
-        profileSelected(profile){
+        profileSelected(profile) {
             this.profileSelect = profile;
             this.dialog = true;
         },
@@ -145,3 +172,58 @@ export default {
 };
 </script>
   
+
+<style>
+.skeleton-box {
+    display: inline-block;
+    height: 1em;
+    position: relative;
+    overflow: hidden;
+    background-color: #dddbdd;
+}
+
+.skeleton-box::after {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    transform: translateX(-100%);
+    background-image: linear-gradient(90deg, rgba(255, 255, 255, 0) 0, rgba(255, 255, 255, 0.2) 20%, rgba(255, 255, 255, 0.5) 60%, rgba(255, 255, 255, 0));
+    animation: shimmer 2s infinite;
+    content: '';
+}
+
+@keyframes shimmer {
+    100% {
+        transform: translateX(100%);
+    }
+}
+
+.blog-post__headline {
+    font-size: 1.25em;
+    font-weight: bold;
+}
+
+.blog-post__meta {
+    font-size: 0.85em;
+    color: #6b6b6b;
+}
+
+.o-media {
+    display: flex;
+}
+
+.o-media__body {
+    flex-grow: 1;
+    margin-left: 1em;
+}
+
+.o-vertical-spacing>*+* {
+    margin-top: 0.75em;
+}
+
+.o-vertical-spacing--l>*+* {
+    margin-top: 2em;
+}
+</style>
