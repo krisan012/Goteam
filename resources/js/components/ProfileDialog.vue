@@ -7,7 +7,7 @@
                     <v-icon>fa fa-arrow-left</v-icon>
                 </v-btn>
 
-                <v-toolbar-title>{{ profile.name }}</v-toolbar-title>
+                <v-toolbar-title>{{ currentUser.name }}</v-toolbar-title>
 
                 <v-spacer></v-spacer>
 
@@ -25,7 +25,7 @@
                         <input type="file" ref="fileInput" @change="onFileChange">
                     </v-avatar>
 
-                    <v-list-item :title="profile.name" :subtitle="profile.birthday" class="text-center pt-0"
+                    <v-list-item :title="currentUser.name" :subtitle="currentUser.birthday" class="text-center pt-0"
                         style="top:-20px"></v-list-item>
                 </v-col>
             </v-row>
@@ -139,6 +139,14 @@ export default {
                 this.$emit('update:show', false);
             }
         },
+
+        isCurrentUser(){
+            return parseInt(this.profile.id) == parseInt(this.$store.state.authId)
+        },
+
+        currentUser(){
+            return this.isCurrentUser ? this.$store.state.authenticatedUser : this.profile
+        }
     },
 
     data() {

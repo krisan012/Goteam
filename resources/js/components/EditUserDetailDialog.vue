@@ -32,12 +32,22 @@
                     <v-btn color="blue-darken-1" variant="text" @click="showEditDialog = false">
                         Close
                     </v-btn>
-                    <v-btn color="blue-darken-1" variant="text" @click="saveUser">
+                    <v-btn color="blue-darken-1" :loading="loading" variant="text" @click="saveUser">
                         Save
                     </v-btn>
                 </v-card-actions>
             </v-card>
         </v-dialog>
+
+        <v-snackbar v-model="snackbar" :timeout="2000" color="green">
+            Successfully Updated!
+
+            <template v-slot:actions>
+                <v-btn color="pink" variant="text" @click="snackbar = false">
+                    Close
+                </v-btn>
+            </template>
+        </v-snackbar>
     </v-row>
 </template>
 
@@ -61,7 +71,9 @@ export default {
             password: this.user.password,
             first_name: this.user.first_name,
             last_name: this.user.last_name,
-            birthday: this.user.birthday
+            birthday: this.user.birthday,
+            loading: false,
+            snackbar: false,
         }
     },
 
@@ -79,6 +91,7 @@ export default {
 
     methods: {
         async saveUser() {
+            this.loading = true;
             const data = {
                 id: this.user.id,
                 email: this.email,
@@ -91,9 +104,11 @@ export default {
 
             if (response.status === 201) {
                 this.$store.commit('setAuthenticatedUser', response.data.user);
+                this.snackbar = true;
             } else {
                 throw new Error('Unable to save user data');
             }
+            this.loading = false;
         },
 
     }
