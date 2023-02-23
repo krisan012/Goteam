@@ -19,10 +19,13 @@
 
             <v-row justify="center" style="max-height: 220px;">
                 <v-col cols="12">
-                    <v-avatar size="90" style="top: -30px;display: block; margin: 0 auto;" class="elevation-20"
+                    <v-avatar v-if="isCurrentUser" size="90" style="top: -30px;display: block; margin: 0 auto;cursor: pointer;" class="elevation-20"
                         @click="triggerFileUpload">
                         <v-img :src="newAvatar" height="200px" cover></v-img>
                         <input type="file" ref="fileInput" @change="onFileChange">
+                    </v-avatar>
+                    <v-avatar v-else size="90" style="top: -30px;display: block; margin: 0 auto;" class="elevation-20">
+                        <v-img :src="newAvatar" height="200px" cover></v-img>
                     </v-avatar>
 
                     <v-list-item :title="currentUser.name" :subtitle="currentUser.birthday" class="text-center pt-0"
@@ -192,7 +195,6 @@ export default {
             this.uploadAvatar();
         },
         async uploadAvatar() {
-            console.log('uploading avatar');
             const formData = new FormData();
             formData.append('avatar', this.newAvatar);
             try {
