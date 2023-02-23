@@ -39,6 +39,7 @@ Route::middleware(['auth.web'])->group(function () {
     Route::get('/get/current-user', [UserController::class, 'getCurrentUser']);
     
     Route::post('/user/save', [UserController::class, 'store']);
+    Route::post('/user/avatar/update', [UserController::class, 'uploadAvatar']);
 });
 
 

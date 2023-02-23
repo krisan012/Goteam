@@ -19,8 +19,10 @@
 
             <v-row justify="center" style="max-height: 220px;">
                 <v-col cols="12">
-                    <v-avatar size="90" style="top: -30px;display: block; margin: 0 auto;" class="elevation-20">
-                        <v-img src="https://cdn.vuetifyjs.com/images/cards/sunshine.jpg" height="200px" cover></v-img>
+                    <v-avatar size="90" style="top: -30px;display: block; margin: 0 auto;" class="elevation-20"
+                        @click="triggerFileUpload">
+                        <v-img :src="newAvatar" height="200px" cover></v-img>
+                        <input type="file" ref="fileInput" @change="onFileChange">
                     </v-avatar>
 
                     <v-list-item :title="profile.name" :subtitle="profile.birthday" class="text-center pt-0"
@@ -145,7 +147,9 @@ export default {
             isFullScreen: window.innerWidth <= 760,
             pokemonData: {},
             pokemonDialog: false,
-            userDetailEditDialog: false
+            userDetailEditDialog: false,
+            newAvatar: this.$store.state.authenticatedUser.avatar,
+            base64Img: null,
         }
     },
 
@@ -173,6 +177,34 @@ export default {
         closeUserDetailEditDialog() {
             this.userDetailEditDialog = false;
         },
+
+        onFileChange(event) {
+            this.newAvatar = event.target.files[0];
+
+            this.uploadAvatar();
+        },
+        async uploadAvatar() {
+            console.log('uploading avatar');
+            const formData = new FormData();
+            formData.append('avatar', this.newAvatar);
+            try {
+                const response = await axios.post('/user/avatar/update', formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    }
+                });
+
+                this.$store.commit('setAuthenticatedUser', response.data.user);
+                this.newAvatar = response.data.user.avatar
+                // response.data.avatar_url
+            } catch (error) {
+                console.error(error);
+            }
+        },
+
+        triggerFileUpload() {
+            this.$refs.fileInput.click()
+        }
     }
 
 }

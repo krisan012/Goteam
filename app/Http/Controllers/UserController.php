@@ -49,9 +49,8 @@ class UserController extends Controller
             'last_name' => 'nullable|string|max:255',
             'birthday' => 'nullable|date_format:Y-m-d'
         ]);
-        
-        if(isset($request->password))
-        {
+
+        if (isset($request->password)) {
             $user = User::updateOrCreate(
                 ['id' => $request->id],
                 [
@@ -75,10 +74,26 @@ class UserController extends Controller
                 ]
             );
         }
-        
+
 
         $user->save();
 
         return response()->json(['user' => $user], 201);
+    }
+
+    public function uploadAvatar(Request $request)
+    {
+        $user = $request->user();
+
+        $validatedData = $request->validate([
+            'avatar' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048'
+        ]);
+
+        $path = $request->file('avatar')->store('avatars');
+
+        $user->avatar = env('APP_URL') .'/'. $path;
+        $user->save();
+
+        return response()->json(['user' => $user], 200);
     }
 }
