@@ -1,0 +1,147 @@
+<template>
+    <v-container style="margin-inline: auto;max-width: 1320px;">
+        <v-toolbar>
+            <v-toolbar-title>Users</v-toolbar-title>
+        </v-toolbar>
+        <v-row dense>
+            <v-col v-for="user in users.data" :key="user" lg="3" md="4" sm="6">
+                <v-card color="grey-lighten-5" class="mt-5" v-ripple.center @click="profileSelected(user)">
+                    <div class="d-flex flex-no-wrap justify-space-between">
+                        <div>
+                            <v-card-title class="text-sm pb-0" style="max-width: 167px;">
+                                {{ user.name }}
+                            </v-card-title>
+
+                            <v-card-subtitle>12/19/1994</v-card-subtitle>
+
+                            <v-card-actions class="pb-0">
+                                <div class="v-btn v-btn--icon v-theme--light v-btn--density-default v-btn--size-default v-btn--variant-text ms-2"
+                                    v-for="like in user.likes" :key="like.id">
+                                    <v-img style="width: 50px" color="red"
+                                        :src="`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${like.pokemon_id}.png`"></v-img>
+                                </div>
+                                <!-- <v-btn class="ms-2" icon="fa fa-play" variant="text"></v-btn>
+                                <v-btn class="ms-2" icon="fa fa-heart" variant="text"></v-btn> -->
+                                <!-- <v-btn class="ms-2" icon="fa fa-pause" variant="text"></v-btn> -->
+                            </v-card-actions>
+
+                            <v-card-actions class="pt-0 ">
+                                <div class="v-btn v-btn--icon v-theme--light v-btn--density-default v-btn--size-default v-btn--variant-text ms-2"
+                                    v-for="dislike in user.dislikes" :key="dislike.id">
+                                    <v-img style="width: 50px" color="red"
+                                        :src="`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${dislike.pokemon_id}.png`"></v-img>
+                                </div>
+                                <!-- <v-img class="bg-white" 
+                                    :src="`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1.png`"></v-img> -->
+                                <!-- <v-btn class="ms-2" icon="fa fa-heart" variant="text"></v-btn> -->
+                                <!-- <v-btn class="ms-2" icon="fa fa-pause" variant="text"></v-btn> -->
+                            </v-card-actions>
+                        </div>
+
+                        <v-avatar class="ma-3" size="125" rounded="0">
+                            <v-img :src="user.avatar"></v-img>
+                        </v-avatar>
+                    </div>
+                </v-card>
+            </v-col>
+        </v-row>
+
+
+        <profile-dialog :dialog.sync="dialog" :profile="profileSelect" @update:show="closeProfileDialog" />
+        <!-- <template>
+            <v-dialog v-model="dialog" width="auto">
+
+                <v-card>
+                    <v-card-text>
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore
+                        et
+                        dolore magna aliqua.
+                    </v-card-text>
+                    <v-card-actions>
+                        <v-btn color="primary" block @click="dialog = false">Close Dialog</v-btn>
+                    </v-card-actions>
+                </v-card>
+            </v-dialog>
+        </template> -->
+
+
+        <!-- <v-card v-intersect="loadMore"></v-card> -->
+    </v-container>
+</template>
+  
+<script>
+import axios from 'axios';
+import ProfileDialog from './ProfileDialog.vue';
+
+export default {
+    components: {
+        ProfileDialog,
+    },
+    data() {
+        return {
+            users: [],
+            profileSelect: {},
+            page: 1,
+            loading: false,
+            lastpage: 1,
+            dialog: false
+        };
+    },
+    mounted() {
+        this.fetchUsers();
+    },
+    methods: {
+        fetchUsers() {
+            // Fetch the list of users from the server
+            this.loading = true;
+            axios.get('/get/users')
+                .then(response => {
+                    // Update the users array with the fetched data
+                    console.log(response)
+                    this.users = response.data.data
+                    this.loading = false;
+                    this.lastpage = response.data.data.last_page
+                })
+                .catch(error => {
+                    console.error(error);
+                });
+        },
+
+        async loadMore() {
+            // If we're already loading, don't load more data
+            if (this.loading) {
+                return;
+            }
+
+            if (this.page > this.lastpage)
+                return;
+
+            // Set loading state to true
+            this.loading = true;
+
+            // Fetch the next page of users from the API
+            const nextPage = this.page + 1;
+            const response = await axios.get(`/get/users?page=${nextPage}`);
+
+            // Append the new users to the existing users array
+            this.users.data.push(...response.data.data.data);
+
+            // Update the page number
+            this.page = nextPage;
+
+            // Set loading state to false
+            this.loading = false;
+        },
+
+        profileSelected(profile){
+            this.profileSelect = profile;
+            this.dialog = true;
+        },
+        closeProfileDialog() {
+            this.dialog = false;
+        }
+
+    },
+};
+</script>
+  

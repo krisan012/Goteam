@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 import Home from './components/Home.vue';
 import Login from './components/Login.vue';
 import Register from './components/Register.vue';
+import UserList from './components/UserList.vue';
 import store from './store';
 
 const routes = [
@@ -23,6 +24,12 @@ const routes = [
         component: Register,
         meta: { requiresGuest: true },
     },
+    {
+      path: '/users',
+        name: 'Users',
+        component: UserList,
+        meta: { requiresAuth: true },
+    }
 ];
 
 const router = createRouter({

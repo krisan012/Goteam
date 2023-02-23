@@ -42,8 +42,19 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
+    /**
+     * Get all the likes for the user.
+     */
     public function likes()
     {
-        return $this->hasMany(Like::class);
+        return $this->hasMany(Like::class)->where('type', 1);
+    }
+
+    /**
+     * Get all the dislikes for the user.
+     */
+    public function dislikes()
+    {
+        return $this->hasMany(Like::class)->where('type', 0);
     }
 }
