@@ -25,6 +25,8 @@
                                 <!-- <v-btn class="ms-2" icon="fa fa-pause" variant="text"></v-btn> -->
                             </v-card-actions>
 
+                            <v-divider v-if="user.dislikes.length >= 1" style="margin: 0 20px"></v-divider>
+                            
                             <v-card-actions class="pt-0 ">
                                 <div class="v-btn v-btn--icon v-theme--light v-btn--density-default v-btn--size-default v-btn--variant-text ms-2"
                                     v-for="dislike in user.dislikes" :key="dislike.id">

@@ -33,7 +33,17 @@
 
             <div class="ma-5 text-center">
                 <v-row justify="center" dense>
-                    <v-col cols="12" lg="4" md="4" sm="6" v-for="like in userLikes" :key="like.id">
+
+                    <v-col v-if="parseInt(profile.id) == parseInt(this.$store.state.authId)" cols="12" lg="4" md="4" sm="6" v-for="like in userLikes" :key="like.id">
+                        <v-avatar size="120" class="elevation-5 ml-2 mr-2 zoom" @click="FetchPokemonData(like.pokemon_id)"
+                            style="cursor: pointer;">
+                            <v-img
+                                :src="`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${like.pokemon_id}.png`"
+                                height="120px" contain></v-img>
+                        </v-avatar>
+                    </v-col>
+
+                    <v-col v-else cols="12" lg="4" md="4" sm="6" v-for="like in profile.likes" :key="like.pokemon_id">
                         <v-avatar size="120" class="elevation-5 ml-2 mr-2 zoom" @click="FetchPokemonData(like.pokemon_id)"
                             style="cursor: pointer;">
                             <v-img

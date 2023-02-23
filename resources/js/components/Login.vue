@@ -53,13 +53,12 @@
                 password: this.password,
             })
             .then(response => {
-                console.log(response);
                 this.$store.commit('setAuthenticated', true);
+                this.$store.commit('setAuthenticatedUser', response.data.user);
                 // Redirect to the home page on successful login
                 this.$router.push('/');
             })
             .catch(error => {
-                console.log(error);
                 // Show an error message to the user
                 alert('Invalid email or password.');
             });
