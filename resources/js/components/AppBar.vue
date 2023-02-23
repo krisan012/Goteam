@@ -1,9 +1,11 @@
 <template>
     <div>
         <v-app-bar class="mb-10">
-            <v-toolbar-title>My App</v-toolbar-title>
+            <v-toolbar-title v-ripple @click="this.$router.push('/')" style="cursor: pointer;">My App</v-toolbar-title>
             <v-spacer></v-spacer>
+            <v-btn @click="this.$router.push('/users')" size="x-large" variant="text" icon="fas fa-users"></v-btn>
             <v-btn @click="fetchCurrentUser" size="x-large" variant="text" icon="fas fa-user"></v-btn>
+            
             <v-btn @click="logout">
                 Logout
                 <v-icon>fa fa-arrow-right-from-bracket</v-icon>

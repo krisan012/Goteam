@@ -1,9 +1,7 @@
 <template>
     <v-container style="margin-inline: auto;max-width: 1320px;">
-        <v-toolbar>
-            <v-toolbar-title>Users</v-toolbar-title>
-        </v-toolbar>
-        <v-row dense>
+        <app-bar></app-bar>
+        <v-row dense class="pa-0 mt-15">
             <v-col v-for="user in users.data" :key="user" lg="3" md="4" sm="6">
                 <v-card color="grey-lighten-5" class="mt-5" v-ripple.center @click="profileSelected(user)">
                     <div class="d-flex flex-no-wrap justify-space-between">
@@ -26,7 +24,7 @@
                             </v-card-actions>
 
                             <v-divider v-if="user.dislikes.length >= 1" style="margin: 0 20px"></v-divider>
-                            
+
                             <v-card-actions class="pt-0 ">
                                 <div class="v-btn v-btn--icon v-theme--light v-btn--density-default v-btn--size-default v-btn--variant-text ms-2"
                                     v-for="dislike in user.dislikes" :key="dislike.id">
@@ -77,22 +75,6 @@
 
 
         <profile-dialog :dialog.sync="dialog" :profile="profileSelect" @update:show="closeProfileDialog" />
-        <!-- <template>
-            <v-dialog v-model="dialog" width="auto">
-
-                <v-card>
-                    <v-card-text>
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore
-                        et
-                        dolore magna aliqua.
-                    </v-card-text>
-                    <v-card-actions>
-                        <v-btn color="primary" block @click="dialog = false">Close Dialog</v-btn>
-                    </v-card-actions>
-                </v-card>
-            </v-dialog>
-        </template> -->
-
 
         <v-card v-intersect="loadMore"></v-card>
     </v-container>
@@ -101,10 +83,12 @@
 <script>
 import axios from 'axios';
 import ProfileDialog from './ProfileDialog.vue';
+import AppBar from './AppBar.vue';
 
 export default {
     components: {
         ProfileDialog,
+        AppBar
     },
     data() {
         return {
