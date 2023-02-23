@@ -42,6 +42,8 @@ Route::get('/pokemon/{pokemon_id}/likes', [LikeController::class, 'index']);
 
 Route::get('/get/users', [UserController::class, 'index']);
 
+Route::get('/get/current-user', [UserController::class, 'getCurrentUser']);
+
 
 Route::get('/{vue_capture?}', function() {
     return view('layouts.app');
