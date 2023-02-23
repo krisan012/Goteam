@@ -1,9 +1,9 @@
 <template>
   <v-container class="fill-height" fluid>
     <v-row justify="center" align="center">
-      <v-col cols="12" md="8" lg="6">
-        <v-card>
-          <v-card-title class="text-h5">
+      <v-col cols="12" md="8" lg="4">
+        <v-card class="text-right">
+          <v-card-title class="text-h5 text-center pa-10">
             Register
           </v-card-title>
 
@@ -11,17 +11,27 @@
             <v-form @submit.prevent="register" ref="form">
               <v-row>
                 <v-col cols="6">
-                  <v-text-field v-model="first_name" label="First Name" :rules="firstNameRules" prepend-icon="fas fa-user"></v-text-field>
+                  <v-text-field v-model="first_name" label="First Name" :rules="firstNameRules"
+                    prepend-icon="fas fa-user"></v-text-field>
                 </v-col>
                 <v-col cols="6">
-                  <v-text-field v-model="last_name" label="Last Name" :rules="lastNameRules" prepend-icon="fas fa-user"></v-text-field>
+                  <v-text-field v-model="last_name" label="Last Name" :rules="lastNameRules"
+                    prepend-icon="fas fa-user"></v-text-field>
                 </v-col>
               </v-row>
-              <v-text-field v-model="email" label="Email" type="email" :rules="emailRules" prepend-icon="fas fa-envelope"></v-text-field>
-              <v-text-field v-model="password" label="Password" type="password" :rules="passwordRules" prepend-icon="fas fa-lock"></v-text-field>
-              <v-text-field v-model="password_confirmation" label="Confirm Password" type="password" :rules="confirmPasswordRules" prepend-icon="fas fa-lock"></v-text-field>
+              <v-text-field v-model="email" label="Email" type="email" :rules="emailRules"
+                prepend-icon="fas fa-envelope"></v-text-field>
+              <v-text-field v-model="password" label="Password" type="password" :rules="passwordRules"
+                prepend-icon="fas fa-lock"></v-text-field>
+              <v-text-field v-model="password_confirmation" label="Confirm Password" type="password"
+                :rules="confirmPasswordRules" prepend-icon="fas fa-lock"></v-text-field>
               <v-btn type="submit" color="primary" class="mt-4">Register</v-btn>
             </v-form>
+            <v-divider class="my-4"></v-divider>
+            <div class="text-center">
+              <span class="mr-2">Already Registered?</span>
+              <router-link class="font-weight-bold" to="/login">Login</router-link>
+            </div>
             <v-alert v-if="errorMessage" type="error" dismissible class="mt-4">
               {{ errorMessage }}
             </v-alert>
