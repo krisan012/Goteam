@@ -41,6 +41,7 @@ php artisan dusk:install
 php artisan dusk
 ```
 
+  `Tests\Browser\ExampleTest::testBasicExample` will make an error in testing. better to delete the default test of laravel dusk
 ---
 
 ## Route
