@@ -1,65 +1,115 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+# Pokemon List
+The project is a web application that utilizes the Pokemon API from https://pokeapi.co/ to fetch and display a list of Pokemons. The application requires users to register to enable them to like up to three Pokemons and dislike up to three Pokemons. The project uses state with the help of Vuex to manage and store data in the client-side. The frontend of the application is built using Vue.js, with Vuetify as the main CSS framework. Some additional Javascript frameworks such as Lodash and Vue3datepicker.com are also incorporated into the project.
 
-## About Laravel
+On the server-side, the application uses Laravel as the main backend framework, which communicates with the frontend to store user data and manage server-side validation of user input. The project is developed by Mark Anthony Tuazon and is a part of his exam for the job application.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+---
+---
+---
+## Project Setup
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+ 1. Copy the .env.example file to .env and fill in your MySQL details and the APP_URL environment variable.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+2. Run the following commands:
+   
+```sh
+composer install
+php artisan migrate
+php artisan storage:link
+npm install
+npm run build
+```
 
-## Learning Laravel
+* `composer install` installs the required PHP packages.
+* `php artisan migrate` runs the database migrations to create the necessary tables.
+* `php artisan storage:link` creates a symbolic link to the storage directory for public access to files.
+* `npm install` installs the required Node.js packages.
+* `npm run build` builds the Vue.js application for production.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+---
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 2000 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## Testing
 
-## Laravel Sponsors
+We use Laravel Dusk for testing. Run the following commands to set up Dusk and run the tests:
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+```sh
+composer require --dev laravel/dusk
+php artisan dusk:install
+php artisan dusk
+```
 
-### Premium Partners
+---
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
-- **[Lendio](https://lendio.com)**
+## Route
 
-## Contributing
+```javascript
+const routes = [
+  {
+    path: '/',
+    name: 'Home',
+    component: Home,
+    meta: { requiresAuth: true, title: 'Home' },
+  },
+  {
+    path: '/login',
+    name: 'Login',
+    component: Login,
+    meta: { requiresGuest: true, title: 'Login' },
+  },
+  {
+    path: '/register',
+    name: 'Register',
+    component: Register,
+    meta: { requiresGuest: true, title: 'Register' },
+  },
+  {
+    path: '/users',
+    name: 'Users',
+    component: UserList,
+    meta: { requiresAuth: true, title: 'Users' },
+  }
+];
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+* The `Home` path displays the list of Pokemon, and infinite scroll automatically fetches new records once the user reaches the bottom of the page.
+* The `Users` path shows all users with their liked and disliked Pokemon.
 
-## Code of Conduct
+## Node.js Packages
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+* "axios": "^1.3.3"
+* "laravel-vite-plugin": "^0.7.2"
+* "vite": "^4.0.0"
+* "@vitejs/plugin-vue": "^4.0.0"
+*  "@vuepic/vue-datepicker": "^4.0.1"
+*  "@vueuse/head": "^1.0.26"
+*   "lodash": "^4.17.21"
+*   "vue": "^3.2.36"
+*   "vue-router": "^4.0.13"
+*   "vuetify": "^3.1.4"
+*   "vuex": "^4.0.2"
 
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+## Composer Packages
+```php
+"require": {
+        "php": "^8.1",
+        "guzzlehttp/guzzle": "^7.2",
+        "laravel/framework": "^10.0",
+        "laravel/sanctum": "^3.2",
+        "laravel/tinker": "^2.8"
+    },
+    "require-dev": {
+        "fakerphp/faker": "^1.9.1",
+        "laravel/dusk": "^7.7",
+        "laravel/pint": "^1.0",
+        "laravel/sail": "^1.18",
+        "mockery/mockery": "^1.4.4",
+        "nunomaduro/collision": "^7.0",
+        "phpunit/phpunit": "^10.0",
+        "spatie/laravel-ignition": "^2.0"
+    },
+```
 
 ## License
 

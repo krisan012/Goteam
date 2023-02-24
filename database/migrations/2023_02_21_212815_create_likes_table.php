@@ -15,9 +15,11 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('pokemon_id');
+            $table->boolean('type')->default(1);
             $table->timestamps();
     
             $table->foreign('user_id')->references('id')->on('users');
+            $table->unique(['user_id', 'pokemon_id']);
         });
     }
 

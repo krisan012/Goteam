@@ -6,7 +6,7 @@
                 <v-img
                     :src="`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${pokemon.id}.png`"
                     :lazy-src="`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokemon.id}.png`"
-                    aspect-ratio="1" cover class="bg-grey-lighten-2">
+                    aspect-ratio="1" cover class="bg-grey-lighten-2 pokemon-img">
                     <template v-slot:placeholder>
                         <v-row class="fill-height ma-0" align="center" justify="center">
                             <v-progress-circular indeterminate color="grey-lighten-5"></v-progress-circular>

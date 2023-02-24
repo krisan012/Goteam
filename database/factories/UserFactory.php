@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
 /**
@@ -23,8 +24,8 @@ class UserFactory extends Factory
             'first_name' => fake()->firstName(),
             'first_name' => fake()->lastName(),
             'avatar' => "https://i.pravatar.cc/120",
-            'birthday' => fake()->dateTimeBetween('1990-01-01', '2012-12-31')->format('d/m/Y'),
-            'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password
+            'birthday' => fake()->dateTimeBetween('1990-01-01', '2012-12-31')->format('Y-m-d'),
+            'password' => Hash::make('password'), // password
             'remember_token' => Str::random(10),
         ];
     }

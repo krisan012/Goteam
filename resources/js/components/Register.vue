@@ -11,21 +11,21 @@
             <v-form @submit.prevent="register" ref="form">
               <v-row>
                 <v-col cols="6">
-                  <v-text-field v-model="first_name" label="First Name" :rules="firstNameRules"
+                  <v-text-field v-model="first_name" name="first_name" label="First Name" :rules="firstNameRules"
                     prepend-icon="fas fa-user"></v-text-field>
                 </v-col>
                 <v-col cols="6">
-                  <v-text-field v-model="last_name" label="Last Name" :rules="lastNameRules"
+                  <v-text-field v-model="last_name" name="last_name" label="Last Name" :rules="lastNameRules"
                     prepend-icon="fas fa-user"></v-text-field>
                 </v-col>
               </v-row>
-              <v-text-field v-model="email" label="Email" type="email" :rules="emailRules"
+              <v-text-field v-model="email" name="email" label="Email" type="email" :rules="emailRules"
                 prepend-icon="fas fa-envelope"></v-text-field>
-              <v-text-field v-model="password" label="Password" type="password" :rules="passwordRules"
+              <v-text-field v-model="password" name="password" label="Password" type="password" :rules="passwordRules"
                 prepend-icon="fas fa-lock"></v-text-field>
-              <v-text-field v-model="password_confirmation" label="Confirm Password" type="password"
+              <v-text-field v-model="password_confirmation" name="password_confirmation" label="Confirm Password" type="password"
                 :rules="confirmPasswordRules" prepend-icon="fas fa-lock"></v-text-field>
-              <v-btn type="submit" color="primary" class="mt-4">Register</v-btn>
+              <v-btn id="register" type="submit" color="primary" class="mt-4">Register</v-btn>
             </v-form>
             <v-divider class="my-4"></v-divider>
             <div class="text-center">

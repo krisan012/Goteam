@@ -2,11 +2,11 @@
     <v-container style="margin-inline: auto;max-width: 1320px;">
         <app-bar></app-bar>
         <v-row dense class="pa-0 mt-15">
-            <v-col v-for="user in users.data" :key="user" lg="3" md="4" sm="6">
+            <v-col class="user-list" v-for="user in users.data" :key="user" lg="3" md="4" sm="6">
                 <v-card color="grey-lighten-5" class="mt-5" v-ripple.center @click="profileSelected(user)">
                     <div class="d-flex flex-no-wrap justify-space-between">
                         <div>
-                            <v-card-title class="text-sm pb-0" style="max-width: 167px;">
+                            <v-card-title class="user-name text-sm pb-0" style="max-width: 167px;">
                                 {{ user.name }}
                             </v-card-title>
 

@@ -9,11 +9,12 @@
 
                     <v-card-text>
                         <v-form @submit.prevent="login" ref="form">
-                            <v-text-field v-model="email" label="Email" type="email" :rules="emailRules"
-                                prepend-icon="fas fa-envelope"></v-text-field>
+                            <v-text-field v-model="email" class="email" label="Email" type="email" :rules="emailRules"
+                                prepend-icon="fas fa-envelope" name="email"></v-text-field>
                             <v-text-field v-model="password" label="Password" type="password" :rules="passwordRules"
-                                prepend-icon="fas fa-lock"></v-text-field>
-                            <v-btn type="submit" color="primary" class="mt-4">Login</v-btn>
+                                prepend-icon="fas fa-lock" name="password"></v-text-field>
+                                <!-- <button>Login</button> -->
+                            <v-btn id="login" type="submit" name="login" color="primary" class="mt-4 login">Login</v-btn>
                         </v-form>
                         <v-divider class="my-4"></v-divider>
                         <div class="text-center">

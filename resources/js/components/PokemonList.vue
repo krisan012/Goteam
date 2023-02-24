@@ -2,7 +2,7 @@
     <v-container>
         <v-row class="mx-lg-auto">
             <v-col v-for="pokemon in pokemonList" :key="pokemon.name" @click="selectPokemon(pokemon)"
-                class="d-flex child-flex pa-2" cols="20" lg="3" md="4" sm="6" align-self="center">
+                class="pokemon-list d-flex child-flex pa-2" cols="20" lg="3" md="4" sm="6" align-self="center">
                 <pokemon-detail :pokemon="pokemon" />
 
             </v-col>
