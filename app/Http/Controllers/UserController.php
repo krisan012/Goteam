@@ -89,9 +89,9 @@ class UserController extends Controller
             'avatar' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048'
         ]);
 
-        $path = $request->file('avatar')->store('avatars');
+        $path = $request->file('avatar')->storePublicly('avatars', 'public');
 
-        $user->avatar = env('APP_URL') .'/'. $path;
+        $user->avatar = env('APP_URL') . '/storage' .'/'. $path;
         $user->save();
 
         return response()->json(['user' => $user], 200);
