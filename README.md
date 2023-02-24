@@ -9,11 +9,12 @@ On the server-side, the application uses Laravel as the main backend framework, 
 ---
 ## Project Setup
 
- 1. Copy the .env.example file to .env and fill in your MySQL details and the APP_URL environment variable.
+ 1. Copy the `.env.example` file to `.env` and fill in your **MySQL** details and the **APP_URL** environment variable.
 
 2. Run the following commands:
    
 ```sh
+php artisan key:generate
 composer install
 php artisan migrate
 php artisan storage:link
