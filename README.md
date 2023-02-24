@@ -14,8 +14,8 @@ On the server-side, the application uses Laravel as the main backend framework, 
 2. Run the following commands:
    
 ```sh
-php artisan key:generate
 composer install
+php artisan key:generate
 php artisan migrate
 php artisan storage:link
 npm install
